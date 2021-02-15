@@ -32,21 +32,21 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <div class="total-frame">
-            <img :src="img_home_order" class="total-icon">
+<!--            <img :src="img_home_order" class="total-icon">-->
             <div class="total-title">今日订单总数</div>
             <div class="total-value">200</div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="total-frame">
-            <img :src="img_home_today_amount" class="total-icon">
+<!--            <img :src="img_home_today_amount" class="total-icon">-->
             <div class="total-title">今日销售总额</div>
             <div class="total-value">￥5000.00</div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="total-frame">
-            <img :src="img_home_yesterday_amount" class="total-icon">
+<!--            <img :src="img_home_yesterday_amount" class="total-icon">-->
             <div class="total-title">昨日销售总额</div>
             <div class="total-value">￥5000.00</div>
           </div>
@@ -230,12 +230,12 @@
               :picker-options="pickerOptions">
             </el-date-picker>
             <div>
-              <ve-line
-                :data="chartData"
-                :legend-visible="false"
-                :loading="loading"
-                :data-empty="dataEmpty"
-                :settings="chartSettings"></ve-line>
+<!--              <ve-line-->
+<!--                :data="chartData"-->
+<!--                :legend-visible="false"-->
+<!--                :loading="loading"-->
+<!--                :data-empty="dataEmpty"-->
+<!--                :settings="chartSettings"></ve-line>-->
             </div>
           </div>
         </el-col>
@@ -246,9 +246,9 @@
 
 <script>
   import {str2Date} from '@/utils/date';
-  import img_home_order from '@/assets/images/home_order.png';
-  import img_home_today_amount from '@/assets/images/home_today_amount.png';
-  import img_home_yesterday_amount from '@/assets/images/home_yesterday_amount.png';
+  // import img_home_order from '@/assets/images/home_order.png';
+  // import img_home_today_amount from '@/assets/images/home_today_amount.png';
+  // import img_home_yesterday_amount from '@/assets/images/home_yesterday_amount.png';
   const DATA_FROM_BACKEND = {
     columns: ['date', 'orderCount','orderAmount'],
     rows: [
@@ -310,9 +310,9 @@
         },
         loading: false,
         dataEmpty: false,
-        img_home_order,
-        img_home_today_amount,
-        img_home_yesterday_amount
+        // img_home_order,
+        // img_home_today_amount,
+        // img_home_yesterday_amount
       }
     },
     created(){

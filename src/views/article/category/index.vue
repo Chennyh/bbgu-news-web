@@ -1,49 +1,21 @@
 <template> 
   <div class="app-container">
-    <el-card class="filter-container" shadow="never">
-      <div>
-        <i class="el-icon-search"></i>
-        <span>筛选搜索</span>
-        <el-button
-          style="float:right"
-          type="primary"
-          @click="handleSearchList()"
-          size="small">
-          查询搜索
-        </el-button>
-        <el-button
-          style="float:right;margin-right: 15px"
-          @click="handleResetSearch()"
-          size="small">
-          重置
-        </el-button>
-      </div>
-      <div style="margin-top: 15px">
-        <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="输入搜索：">
-            <el-input v-model="listQuery.keyword" class="input-width" placeholder="角色名称" clearable></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-card>
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets"></i>
       <span>数据列表</span>
       <el-button size="mini" class="btn-add" @click="handleAdd()" style="margin-left: 20px">添加</el-button>
     </el-card>
     <div class="table-container">
-      <el-table ref="roleTable"
+      <el-table ref="categoryTable"
+                style="width: 100%"
                 :data="list"
-                style="width: 100%;"
-                v-loading="listLoading" border>
+                v-loading="listLoading"
+                border>
         <el-table-column label="编号" width="100" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>
-        <el-table-column label="角色名称" align="center">
+        <el-table-column label="类别名称" align="center">
           <template slot-scope="scope">{{scope.row.name}}</template>
-        </el-table-column>
-        <el-table-column label="描述" align="center">
-          <template slot-scope="scope">{{scope.row.description}}</template>
         </el-table-column>
         <el-table-column label="添加时间" width="180" align="center">
           <template slot-scope="scope">{{scope.row.createTime | formatDateTime}}</template>
@@ -51,15 +23,14 @@
         <el-table-column label="更新时间" width="180" align="center">
           <template slot-scope="scope">{{scope.row.updateTime | formatDateTime}}</template>
         </el-table-column>
-        <el-table-column label="操作" width="160" align="center">
+        <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
             <el-row>
               <el-button size="mini"
-                         type="text"
                          @click="handleUpdate(scope.$index, scope.row)">编辑
               </el-button>
               <el-button size="mini"
-                         type="text"
+                         type="danger"
                          @click="handleDelete(scope.$index, scope.row)">删除
               </el-button>
             </el-row>
@@ -73,38 +44,31 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         layout="total, sizes,prev, pager, next,jumper"
-        :current-page.sync="listQuery.pageNum"
         :page-size="listQuery.pageSize"
         :page-sizes="[5,10,15]"
+        :current-page.sync="listQuery.pageNum"
         :total="total">
       </el-pagination>
     </div>
     <el-dialog
-      :title="isEdit?'编辑角色':'添加角色'"
+      :title="isEdit?'编辑类别':'添加类别'"
       :visible.sync="dialogVisible"
-      width="40%">
-      <el-form :model="role"
-               ref="roleForm"
-               label-width="150px" size="small">
-        <el-form-item label="角色名称：">
-          <el-input v-model="role.name" style="width: 250px"></el-input>
-        </el-form-item>
-        <el-form-item label="描述：">
-          <el-input v-model="role.description"
-                    type="textarea"
-                    :rows="5"
-                    style="width: 250px"></el-input>
+      width="30%">
+      <el-form ref="categoryForm" :model="category" :rules="rules" label-width="120px">
+        <el-form-item label="类别名称" prop="name">
+          <el-input v-model="category.name" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-        <el-button type="primary" @click="handleDialogConfirm()" size="small">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleConfirm()">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
+
 <script>
-  import {fetchList,createRole,updateRole,deleteRole} from '@/api/role';
+  import {fetchList,createCategory,updateCategory,deleteCategory} from '@/api/category'
   import {formatDate} from '@/utils/date';
 
   const defaultListQuery = {
@@ -112,23 +76,32 @@
     pageSize: 5,
     keyword: null
   };
-  const defaultRole = {
+  const defaultCategory = {
     id: null,
-    name: null,
-    description: null,
+    name: ''
   };
+  const defaultRules = {
+    name: [
+      {
+        required: true,
+        message: '请输入类别名称',
+        trigger: 'blur' }
+    ]
+  }
   export default {
-    name: 'roleList',
+    name: "categoryList",
     data() {
       return {
-        listQuery: Object.assign({}, defaultListQuery),
         list: null,
         total: null,
-        listLoading: false,
+        listLoading: true,
+        listQuery: Object.assign({}, defaultListQuery),
         dialogVisible: false,
-        role: Object.assign({}, defaultRole),
-        isEdit: false
-      }
+        dialogTitle: '',
+        category: Object.assign({}, defaultCategory),
+        rules: Object.assign({}, defaultRules),
+        isEdit: false,
+      };
     },
     created() {
       this.getList();
@@ -143,12 +116,13 @@
       }
     },
     methods: {
-      handleResetSearch() {
-        this.listQuery = Object.assign({}, defaultListQuery);
-      },
-      handleSearchList() {
-        this.listQuery.pageNum = 1;
-        this.getList();
+      getList() {
+        this.listLoading = true;
+        fetchList(this.listQuery).then(response => {
+          this.listLoading = false;
+          this.list = response.data.list;
+          this.total = response.data.total;
+        });
       },
       handleSizeChange(val) {
         this.listQuery.pageNum = 1;
@@ -162,18 +136,18 @@
       handleAdd() {
         this.dialogVisible = true;
         this.isEdit = false;
-        this.role = Object.assign({},defaultRole);
+        this.category = Object.assign({}, defaultCategory)
       },
       handleDelete(index, row) {
-        this.$confirm('是否要删除该角色?', '提示', {
+        this.$confirm('是否要删除该类别', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteRole(row.id).then(response => {
+          deleteCategory(row.id).then(response=>{
             this.$message({
-              type: 'success',
-              message: '删除成功!'
+              message: '删除成功',
+              type: 'success'
             });
             this.getList();
           });
@@ -182,16 +156,16 @@
       handleUpdate(index, row) {
         this.dialogVisible = true;
         this.isEdit = true;
-        this.role = Object.assign({},row);
+        this.category = Object.assign({}, row);
       },
-      handleDialogConfirm() {
+      handleConfirm(){
         this.$confirm('是否要确认?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           if (this.isEdit) {
-            updateRole(this.role.id,this.role).then(response => {
+            updateCategory(this.category.id,this.category).then(response => {
               this.$message({
                 message: '修改成功！',
                 type: 'success'
@@ -200,7 +174,7 @@
               this.getList();
             })
           } else {
-            createRole(this.role).then(response => {
+            createCategory(this.category).then(response => {
               this.$message({
                 message: '添加成功！',
                 type: 'success'
@@ -210,18 +184,11 @@
             })
           }
         })
-      },
-      getList() {
-        this.listLoading = true;
-        fetchList(this.listQuery).then(response => {
-          this.listLoading = false;
-          this.list = response.data.list;
-          this.total = response.data.total;
-        });
       }
     }
   }
 </script>
-<style></style>
 
+<style scoped>
 
+</style>

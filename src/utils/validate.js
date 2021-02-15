@@ -1,5 +1,5 @@
 export function isvalidUsername(str) {
-  // const valid_map = ['admin', 'test']
+  // const valid_map = ['user', 'test']
   // return valid_map.indexOf(str.trim()) >= 0
   return str.trim().length>=3
 }
@@ -28,3 +28,13 @@ export function validatAlphabets(str) {
   return reg.test(str)
 }
 
+/* 验证是否为空 */
+export function isNotNullORBlank (...args) {
+  for (let i = 0; i < args.length; i++) {
+    const argument = args[i];
+    if (argument == null || argument === '' || argument === undefined) {
+      return false;
+    }
+  }
+  return true;
+}

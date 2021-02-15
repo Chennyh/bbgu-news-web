@@ -21,11 +21,7 @@ function hasPermission(menus, route) {
       return true;
     } else {
       route.sort = 0;
-      if (route.hidden !== undefined && route.hidden === true) {
-        return true;
-      } else {
-        return false;
-      }
+      return route.hidden !== undefined && route.hidden === true;
     }
   } else {
     return true
@@ -77,24 +73,31 @@ const permission = {
   actions: {
     GenerateRoutes({ commit }, data) {
       return new Promise(resolve => {
-        const { menus } = data;
-        const { username } = data;
+        const { roles } = data;
         const accessedRouters = asyncRouterMap.filter(v => {
-          //admin帐号直接返回所有菜单
-          // if(username==='admin') return true;
-          if (hasPermission(menus, v)) {
-            if (v.children && v.children.length > 0) {
-              v.children = v.children.filter(child => {
-                if (hasPermission(menus, child)) {
-                  return child
-                }
-                return false;
-              });
-              return v
-            } else {
-              return v
+          //简单的权限验证，如果是管理员就返回所有菜单，否则只有用户管理菜单不返回
+          for (let i = 0; i < roles.length; i++) {
+            if (roles[i].name === "ADMIN") {
+              return true;
+            }else if (roles[i].name === "USER") {
+              if (v.name !== "ums") {
+                return true;
+              }
             }
           }
+          // if (hasPermission(menus, v)) {
+          //   if (v.children && v.children.length > 0) {
+          //     v.children = v.children.filter(child => {
+          //       if (hasPermission(menus, child)) {
+          //         return child
+          //       }
+          //       return false;
+          //     });
+          //     return v
+          //   } else {
+          //     return v
+          //   }
+          // }
           return false;
         });
         //对菜单进行排序

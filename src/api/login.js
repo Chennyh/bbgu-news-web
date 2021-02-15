@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function login(username, password) {
   return request({
-    url: '/admin/login',
+    url: '/user/login',
     method: 'post',
     data: {
       username,
@@ -13,68 +13,82 @@ export function login(username, password) {
 
 export function getInfo() {
   return request({
-    url: '/admin/info',
+    url: '/user/info',
+    method: 'get',
+  })
+}
+
+export function getUser(id) {
+  return request({
+    url: '/user/' + id,
     method: 'get',
   })
 }
 
 export function logout() {
   return request({
-    url: '/admin/logout',
+    url: '/user/logout',
     method: 'post'
   })
 }
 
 export function fetchList(params) {
   return request({
-    url: '/admin/list',
+    url: '/user/list',
     method: 'get',
     params: params
   })
 }
 
-export function createAdmin(data) {
+export function fetchUAllUserList() {
   return request({
-    url: '/admin/register',
+    url: '/user/listAll',
+    method: 'get'
+  })
+}
+
+export function createUser(data) {
+  return request({
+    url: '/user/register',
     method: 'post',
     data: data
   })
 }
 
-export function updateAdmin(id, data) {
+export function updateUser(id, data) {
   return request({
-    url: '/admin/update/' + id,
-    method: 'post',
+    url: '/user/' + id,
+    method: 'put',
     data: data
   })
 }
 
 export function updateStatus(id, params) {
   return request({
-    url: '/admin/updateStatus/' + id,
-    method: 'post',
+    url: '/user/status/' + id,
+    method: 'put',
     params: params
   })
 }
 
-export function deleteAdmin(id) {
+export function deleteUser(id) {
   return request({
-    url: '/admin/delete/' + id,
-    method: 'post'
+    url: '/user/' + id,
+    method: 'delete'
   })
 }
 
-export function getRoleByAdmin(id) {
+export function getRoleByUser(id) {
   return request({
-    url: '/admin/role/' + id,
+    url: '/user/roles/' + id,
     method: 'get'
   })
 }
 
-export function allocRole(data) {
+export function allocRole(id, params) {
   return request({
-    url: '/admin/role/update',
-    method: 'post',
-    data: data
+    url: '/user/roles/' + id,
+    method: 'put',
+    params: params
   })
 }
