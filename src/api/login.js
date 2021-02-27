@@ -92,3 +92,10 @@ export function allocRole(id, params) {
     params: params
   })
 }
+
+export function userCount() {
+  return request({
+    url:'/user/count',
+    method:'get'
+  })
+}

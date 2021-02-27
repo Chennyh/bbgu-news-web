@@ -108,3 +108,10 @@ export function deleteImg(imageName) {
     method:'delete',
   })
 }
+
+export function articleCount() {
+  return request({
+    url:'/article/count',
+    method:'get'
+  })
+}

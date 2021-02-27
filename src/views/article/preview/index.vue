@@ -1,12 +1,9 @@
 <template> 
   <el-container>
-    <el-header>
-      <div style="text-align: left;">
-        <el-button type="text" icon="el-icon-back" @click="goBack" style="padding-bottom: 0px;">返回</el-button>
-      </div>
+    <el-main>
       <div>
         <div>
-          <h3 style="text-align: center">
+          <h3 style="text-align: center;">
             {{ article.title }}
           </h3>
         </div>
@@ -33,9 +30,7 @@
           <span style="margin:0px 50px 0px 0px"></span>
         </div>
       </div>
-    </el-header>
-    <el-main>
-      <div style="text-align: left" v-html="article.context">
+      <div style="text-align: left;" v-html="article.context">
       </div>
     </el-main>
   </el-container>
@@ -84,9 +79,6 @@
         }).catch(() => {
 
         });
-      },
-      goBack(){
-        this.$router.go(-1);
       }
     }
   }

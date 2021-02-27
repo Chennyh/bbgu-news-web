@@ -74,15 +74,16 @@ export const asyncRouterMap = [
         component: () => import('@/views/article/category/index'),
         meta: {title: '文章类别', icon: 'category'}
       },
-      {
-        path: 'comments',
-        name: 'comments',
-        component: () => import('@/views/article/comments/index'),
-        meta: {title: '文章评论', icon: 'comments'}
-      }
+      // {
+      //   path: 'comments',
+      //   name: 'comments',
+      //   component: () => import('@/views/article/comments/index'),
+      //   meta: {title: '文章评论', icon: 'comments'}
+      // }
     ]
   },
-  {    path:'/ums',
+  {
+    path:'/ums',
     component: Layout,
     redirect: '/ums/user',
     name: 'ums',
